@@ -25,73 +25,96 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Project setup
+## Prerequisites
+- Docker
+- Docker Compose
+- Postman (for testing APIs)
+- pgAdmin 4 (optional)
 
+⚠️ This project <b>cannot run locally without Docker</b> because the database connection is configured only via Docker.
+
+## Project Structure
 ```bash
-$ npm install
+src/
+ ├── auth/             # Authentication module (JWT + Passport)
+ ├── users/            # User management module
+ ├── restaurants/      # Restaurants module
+ ├── foods/            # Foods module
+ ├── orders/           # Orders module
+ ├── app.module.ts     # Main module
+ └── main.ts           # Entry point
 ```
 
-## Compile and run the project
+#### Key Notes:
+- Entities are auto-loaded using TypeORM.
+- JWT secret and database credentials are loaded from .env.
 
+## Environment Variables
+Create a .env file in the project root:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+DATABASE_HOST=localhost
+DATABASE_PORT=5433
+DATABASE_USER=your_db_user
+DATABASE_PASSWORD=your_db_password
+DATABASE_NAME=your_database_name
+JWT_SECRET=your_jwt_secret
 ```
 
-## Run tests
+## Running the Project with Docker
+#### 1. Build and start containers:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+$ docker-compose up --build
 ```
 
-## Deployment
+#### This will:
+- Start a PostgreSQL container.
+- Start the NestJS app container.
+- Map app port 3000 to 4000 on your host.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+#### 2. Check containers are running:
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+$ docker ps
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+#### You should see two containers:
+- PostgreSQL
+- NestJS backend
 
-## Resources
+## Database Access
+- PostgreSQL is running in Docker.
+- You can connect using pgAdmin 4 or psql with the credentials from .env.
+- Default Docker port mapping: 5433:5432 (host:container).
 
-Check out a few resources that may come in handy when working with NestJS:
+## Testing API with Postman
+#### 1. Set base URL:
+```bash
+http://localhost:4000
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+#### 2. Example endpoints:
+```bash
+| Method | Endpoint       | Description                  |
+| ------ | -------------- | ---------------------------- |
+| POST   | /auth/login    | Login user and get JWT token |
+| POST   | /auth/register | Register a new user          |
+| GET    | /restaurants   | Get all restaurants          |
+| POST   | /foods         | Add a new food item          |
+| POST   | /orders        | Create an order              |
+```
 
-## Support
+#### 3. Include JWT in Authorization Header for protected routes:
+```bash
+Authorization: Bearer <your_token_here>
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Notes
+- Database must run via Docker to avoid connection errors.
+- If you shut down your PC, restart containers using:
+```bash
+docker-compose up
+```
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 
